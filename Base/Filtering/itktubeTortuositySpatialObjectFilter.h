@@ -164,32 +164,32 @@ public:
   enum MeasureType
     {
     // Vessel-wise metrics
-    AVERAGE_RADIUS_METRIC =               0x00004000,
-    CHORD_LENGTH_METRIC =                 0x00000020,
-    DISTANCE_METRIC =                     0x00000001,
-    INFLECTION_COUNT_METRIC =             0x00000002,
-    INFLECTION_COUNT_1_METRIC =           0x00000400,
-    INFLECTION_COUNT_2_METRIC =           0x00000800,
-    PATH_LENGTH_METRIC =                  0x00000010,
-    PERCENTILE_95_METRIC =                0x00001000,
-    SUM_OF_ANGLES_METRIC =                0x00000008,
-    TOTAL_CURVATURE_METRIC =              0x00000100,
-    TOTAL_SQUARED_CURVATURE_METRIC =      0x00000200,
+    AVERAGE_RADIUS_METRIC =               0x4000,
+    CHORD_LENGTH_METRIC =                 0x0020,
+    DISTANCE_METRIC =                     0x0001,
+    INFLECTION_COUNT_METRIC =             0x0002,
+    INFLECTION_COUNT_1_METRIC =           0x0400,
+    INFLECTION_COUNT_2_METRIC =           0x0800,
+    PATH_LENGTH_METRIC =                  0x0010,
+    PERCENTILE_95_METRIC =                0x1000,
+    SUM_OF_ANGLES_METRIC =                0x0008,
+    TOTAL_CURVATURE_METRIC =              0x0100,
+    TOTAL_SQUARED_CURVATURE_METRIC =      0x0200,
 
     // Point-wise metrics
-    CURVATURE_SCALAR_METRIC =             0x00000040,
-    CURVATURE_VECTOR_METRIC =             0x00000080,
-    INFLECTION_POINTS_METRIC =            0x00000004,
+    CURVATURE_SCALAR_METRIC =             0x0040,
+    CURVATURE_VECTOR_METRIC =             0x0080,
+    INFLECTION_POINTS_METRIC =            0x0004,
 
     // Other-wise metrics
-    CURVATURE_HISTOGRAM_METRICS =         0x00002000,
+    CURVATURE_HISTOGRAM_METRICS =         0x2000,
 
     // Metric bitmasks
-    BITMASK_ALL_METRICS =                 0xFFFFFFFF,
-    BITMASK_VESSEL_WISE_METRICS =         0x00005F3B,
-    BITMASK_POINT_WISE_METRICS =          0x000000C4,
-    BITMASK_OTHER_WISE_METRICS =          0x00002000,
-    BITMASK_CURVATURE_METRICS =           0x00003FC0
+    BITMASK_ALL_METRICS =                 0xFFFF,
+    BITMASK_VESSEL_WISE_METRICS =         0x5F3B,
+    BITMASK_POINT_WISE_METRICS =          0x00C4,
+    BITMASK_OTHER_WISE_METRICS =          0x2000,
+    BITMASK_CURVATURE_METRICS =           0x3FC0
     };
   
   /** Set/Get the measure flag. This flag governs what metric computed. */
