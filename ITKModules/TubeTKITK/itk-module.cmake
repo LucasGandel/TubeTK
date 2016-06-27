@@ -4,6 +4,7 @@ set(DOCUMENTATION
 itk_module( TubeTKITK
   DEPENDS
     ITKCommon
+    ITKSpatialObjects
   EXCLUDE_FROM_DEFAULT
   DESCRIPTION
     "${DOCUMENTATION}"

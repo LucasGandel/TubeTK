@@ -83,8 +83,8 @@ public:
   itkTypeMacro( ComputeTubeTortuosityMeasures, Object );
 
   /** Set/Get input tubes (TubeGroup) */
-  itkSetConstObjectMacro( Input, TubeGroupType );
-  itkGetConstObjectMacro( Input, TubeGroupType );
+  itkSetObjectMacro( Input, TubeGroupType );
+  itkGetObjectMacro( Input, TubeGroupType );
 
   /** Set/Get output table of measures */
   itkSetObjectMacro( Output, vtkTable );
@@ -125,7 +125,7 @@ protected:
 private:
 
   //Input tube group
-  typename TubeGroupType::ConstPointer              m_Input;
+  typename TubeGroupType::Pointer              m_Input;
 
   //Output table of measures
   vtkSmartPointer< vtkTable >                       m_Output;

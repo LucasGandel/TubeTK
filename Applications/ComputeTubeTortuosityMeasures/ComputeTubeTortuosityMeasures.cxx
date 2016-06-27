@@ -28,7 +28,7 @@
 #include "tubeTubeMath.h"
 
 //TubeTKITK includes
-#include "itktubeComputeTubeTortuosityMeasures.h"
+#include "tubeComputeTubeTortuosityMeasures.h"
 
 // ITK INCLUDES
 #include "itkTimeProbesCollectorBase.h"
@@ -63,7 +63,7 @@ int DoIt( int argc, char * argv[] )
   // typedefs
   typedef itk::SpatialObjectReader< VDimension >      TubesReaderType;
 
-  typedef itk::tube::ComputeTubeTortuosityMeasures< VDimension >
+  typedef ::tube::ComputeTubeTortuosityMeasures< VDimension >
     TortuosityFilterType;
   typename TortuosityFilterType::Pointer tortuosityFilter =
       TortuosityFilterType::New();

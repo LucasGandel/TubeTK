@@ -1,0 +1,5 @@
+itk_wrap_include( tubeComputeTubeTortuosityMeasures.h )
+
+itk_wrap_named_class("tube::ComputeTubeTortuosityMeasures" tubeComputeTubeTortuosityMeasures POINTER)
+itk_wrap_template("3"  "3")
+itk_end_wrap_class()
