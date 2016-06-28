@@ -35,6 +35,7 @@ set( TubeTK_${proj}_MODULES
   ComputeTubeGraphProbability
   ComputeTubeMeasures
   ComputeTubeProbability
+  ComputeTubeTortuosityMeasures
   ConvertCSVToImages
   ConvertImagesToCSV
   ConvertInnerOpticToPlus
@@ -111,7 +112,6 @@ set( TubeTK_${proj}_VTK_MODULES )
 if( TubeTK_USE_VTK )
   set( TubeTK_${proj}_VTK_MODULES
     ConvertTubesToSurface
-    ComputeTubeTortuosityMeasures
     RegisterUsingSlidingGeometries )
   list( APPEND TubeTK_${proj}_MODULES
     ${TubeTK_${proj}_VTK_MODULES} )

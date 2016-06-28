@@ -33,9 +33,9 @@ limitations under the License.
 namespace tube
 {
 /** \class ComputeTubeTortuosityMeasures
- *  \brief Computes various tortuosity measures from an input tube group
- * and outputs it as a vtkTable
- *
+ * \brief Computes various tortuosity measures from an input tube group
+ * and outputs it in a csv file thanks to the WriteCSVfile() method.
+ * The GetOutput() method returns a table containing all the measures.
  *  \ingroup TubeTKITK
  */
 
@@ -88,11 +88,15 @@ public:
   tubeWrapSetObjectMacro( Input, TubeGroupType, Filter );
   tubeWrapGetConstObjectMacro( Input, TubeGroupType, Filter );
 
-  /** Compute image similarity */
+  /** Compute image tortuosity measures */
   tubeWrapUpdateMacro(Filter);
 
-  /** Get image similarity */
-  tubeWrapGetObjectMacro(Output, vtkTable, Filter);
+  /** Get image tortuosity measures */
+  tubeWrapGetMacro(Output, std::vector< itk::Array<double> >, Filter);
+  void WriteCSVfile( std::string csvFileName ) const;
+
+  tubeWrapSetMacro( MetricsLabels, std::vector< std::string >, Filter );
+  tubeWrapGetMacro( MetricsLabels, std::vector< std::string >, Filter );
 
 protected:
   ComputeTubeTortuosityMeasures( void );

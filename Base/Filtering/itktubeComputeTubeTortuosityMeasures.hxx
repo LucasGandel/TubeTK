@@ -26,6 +26,8 @@ limitations under the License.
 // TubeTK includes
 #include "itktubeComputeTubeTortuosityMeasures.h"
 
+#include <fstream>
+
 namespace itk
 {
 
@@ -40,7 +42,6 @@ ComputeTubeTortuosityMeasures< VDimension >
 ::ComputeTubeTortuosityMeasures()
 {
   m_Input = NULL;
-  m_Output = vtkSmartPointer<vtkTable>::New();
 
   //Metrics
   m_BasicMetrics = false;
@@ -130,15 +131,13 @@ ComputeTubeTortuosityMeasures< VDimension >
   TubeListPointerType tubeList = m_Input->GetChildren(
     m_Input->GetMaximumDepth(), childName );
 
-  m_TubeIdArray = vtkSmartPointer<vtkIntArray>::New();
-  m_TubeIdArray->Initialize();
-  m_TubeIdArray->SetName( "TubeIDs" );
-  m_TubeIdArray->SetNumberOfValues( tubeList->size() );
+  m_TubeIdArray.SetSize(tubeList->size());
+  m_MetricsLabels.push_back( "TubeIDs" );
+  m_MetricArrayVec.push_back( m_TubeIdArray );
 
-  m_NumPointsArray = vtkSmartPointer<vtkIntArray>::New();
-  m_NumPointsArray->Initialize();
-  m_NumPointsArray->SetName( "NumberOfPoints" );
-  m_NumPointsArray->SetNumberOfValues( tubeList->size() );
+  m_NumPointsArray.SetSize(tubeList->size());
+  m_MetricsLabels.push_back( "NumberOfPoints" );
+  m_MetricArrayVec.push_back( m_NumPointsArray );
 
   for( int compareFlag = 0x01; compareFlag <=
     static_cast< int >( TortuosityFilterType::BITMASK_ALL_METRICS );
@@ -148,22 +147,18 @@ ComputeTubeTortuosityMeasures< VDimension >
     if( (m_MetricFlag & compareFlag &
         TortuosityFilterType::BITMASK_VESSEL_WISE_METRICS) > 0 )
       {
-      vtkSmartPointer< vtkDoubleArray > metricArray =
-        vtkSmartPointer< vtkDoubleArray >::New();
-      metricArray->Initialize();
-      metricArray->SetName( m_MetricFlagToNameMap[compareFlag].c_str() );
-      metricArray->SetNumberOfValues( tubeList->size() );
+      itk::Array<double> metricArray;
+      metricArray.SetSize( tubeList->size() );
+      m_MetricsLabels.push_back( m_MetricFlagToNameMap[compareFlag].c_str() );
       m_MetricArrayVec.push_back( metricArray );
       }
     }
 
   if( m_CurvatureMetrics )
     {
-    vtkSmartPointer< vtkDoubleArray > tau4Array =
-      vtkSmartPointer< vtkDoubleArray >::New();
-    tau4Array->Initialize();
-    tau4Array->SetName( "Tau4Metric" );
-    tau4Array->SetNumberOfValues( tubeList->size() );
+    itk::Array<double> tau4Array;
+    tau4Array.SetSize( tubeList->size() );
+    m_MetricsLabels.push_back( "Tau4Metric" );
     m_MetricArrayVec.push_back( tau4Array );
     }
 
@@ -179,11 +174,9 @@ ComputeTubeTortuosityMeasures< VDimension >
         << (i+1) * histStep;
       std::string binArrayName = oss.str();
 
-      vtkSmartPointer< vtkIntArray > histArray =
-        vtkSmartPointer< vtkIntArray >::New();
-      histArray->Initialize();
-      histArray->SetName( binArrayName.c_str() );
-      histArray->SetNumberOfValues( tubeList->size() );
+      itk::Array<double> histArray;
+      histArray.SetSize( tubeList->size() );
+      m_MetricsLabels.push_back( binArrayName.c_str() );
       m_HistogramArrays.push_back(histArray);
       }
     }
@@ -209,74 +202,74 @@ ComputeTubeTortuosityMeasures< VDimension >
     tortuosityFilter->SetInput( curTube );
     tortuosityFilter->Update();
 
-    m_TubeIdArray->SetValue( tubeIndex, tubeIndex );
-    m_NumPointsArray->SetValue( tubeIndex, curTube->GetNumberOfPoints() );
+    m_MetricArrayVec[0].SetElement( tubeIndex, tubeIndex );
+    m_MetricArrayVec[1].SetElement( tubeIndex, curTube->GetNumberOfPoints() );
 
     std::cout << "vess = " << curTube->GetId() << std::endl;
 
-    for( unsigned int i = 0; i < m_MetricArrayVec.size(); i++ )
+    for( unsigned int i = 2; i < m_MetricsLabels.size(); i++ )
       {
-      std::string metricName = m_MetricArrayVec[i]->GetName();
+      std::string metricName = m_MetricsLabels[i];
 
       if( metricName == "AverageRadiusMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetAverageRadiusMetric() );
         }
       if( metricName == "ChordLengthMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetChordLengthMetric() );
         }
       if( metricName == "DistanceMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetDistanceMetric() );
         }
       if( metricName == "InflectionCountMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetInflectionCountMetric() );
         }
       if( metricName == "InflectionCount1Metric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetInflectionCount1Metric() );
         }
       if( metricName == "InflectionCount2Metric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetInflectionCount2Metric() );
         }
       if( metricName == "PathLengthMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetPathLengthMetric() );
         }
       if( metricName == "Percentile95Metric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetPercentile95Metric() );
         }
       if( metricName == "SumOfAnglesMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetSumOfAnglesMetric() );
         }
       if( metricName == "Tau4Metric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetTotalCurvatureMetric()
             / tortuosityFilter->GetPathLengthMetric() );
         }
       if( metricName == "TotalCurvatureMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetTotalCurvatureMetric() );
         }
       if( metricName == "TotalSquaredCurvatureMetric" )
         {
-        m_MetricArrayVec[i]->SetValue( tubeIndex,
+        m_MetricArrayVec[i].SetElement( tubeIndex,
           tortuosityFilter->GetTotalSquaredCurvatureMetric() );
         }
       }
@@ -287,7 +280,7 @@ ComputeTubeTortuosityMeasures< VDimension >
       // Get the histogram features
       for( int i = 0; i < m_NumberOfHistogramBins; i++ )
         {
-        m_HistogramArrays[i]->SetValue( tubeIndex,
+        m_HistogramArrays[i].SetElement( tubeIndex,
           tortuosityFilter->GetCurvatureHistogramMetric(i) );
         }
       }
@@ -295,12 +288,9 @@ ComputeTubeTortuosityMeasures< VDimension >
     }
 
   // Write tortuosity measures to a CSV file
-  m_Output->AddColumn( m_TubeIdArray );
-  m_Output->AddColumn( m_NumPointsArray );
-
   for( unsigned int i = 0; i < m_MetricArrayVec.size(); i++ )
     {
-    m_Output->AddColumn( m_MetricArrayVec[i] );
+      m_Output.push_back( m_MetricArrayVec[i] );
     }
 
   if( ( m_MetricFlag & TortuosityFilterType::CURVATURE_HISTOGRAM_METRICS )
@@ -309,10 +299,55 @@ ComputeTubeTortuosityMeasures< VDimension >
     // Get the histogram features
     for( int i = 0; i < m_NumberOfHistogramBins; i++ )
       {
-      m_Output->AddColumn( m_HistogramArrays[i] );
+      m_Output.push_back( m_HistogramArrays[i] );
+      }
+    }
+}
+
+template< unsigned int VDimension >
+void
+ComputeTubeTortuosityMeasures< VDimension >
+::WriteCSVfile( std::string csvStatisticsFile ) const
+{
+  std::ofstream writeStream;
+  if( ! csvStatisticsFile.empty() )
+    {
+    writeStream.open( csvStatisticsFile.c_str(),
+      std::ios::binary | std::ios::out );
+    if( !writeStream.rdbuf()->is_open() )
+      {
+      std::cerr << "Cannot write to file " << csvStatisticsFile << std::endl;
+      return;
       }
     }
 
+  if( ! csvStatisticsFile.empty() )
+    {
+    for( unsigned int i = 0; i < m_MetricsLabels.size(); i++ )
+      {
+      writeStream << m_MetricsLabels[i] << ", ";
+      }
+    writeStream << std::endl;
+    for( unsigned int i = 0; i < m_MetricArrayVec[0].size(); i++ )
+      {
+      // Write metrics
+      for( unsigned int j = 0; j < m_MetricArrayVec.size(); j++ )
+        {
+        writeStream << m_MetricArrayVec[j].GetElement(i) << ", ";
+        }
+      // Write histogram metrics
+      if( ( m_MetricFlag & TortuosityFilterType::CURVATURE_HISTOGRAM_METRICS )
+        > 0 )
+        {
+        for( int j = 0; j < m_NumberOfHistogramBins; j++ )
+          {
+          writeStream << m_HistogramArrays[j].GetElement(i) << ", ";
+          }
+        }
+      writeStream << std::endl;
+      }
+    writeStream.close();
+    }
 }
 
 template< unsigned int VDimension >

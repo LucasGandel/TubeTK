@@ -31,12 +31,6 @@ limitations under the License.
 #include "itkGroupSpatialObject.h"
 #include "itkVesselTubeSpatialObject.h"
 
-// VTK INCLUDES
-#include "vtkTable.h"
-#include "vtkIntArray.h"
-#include "vtkDoubleArray.h"
-#include "vtkSmartPointer.h"
-
 // std includes
 #include <sstream>
 #include <string.h>
@@ -52,7 +46,8 @@ namespace tube
 
 /** \class ComputeTubeTortuosityMeasures
  * \brief Computes various tortuosity measures from an input tube group
- * and outputs it as a vtkTable.
+ * and outputs it in a csv file thanks to the WriteCSVfile() method.
+ * The GetOutput() method returns a table containing all the measures.
  */
 
 template< unsigned int VDimension >
@@ -87,8 +82,12 @@ public:
   itkGetObjectMacro( Input, TubeGroupType );
 
   /** Set/Get output table of measures */
-  itkSetObjectMacro( Output, vtkTable );
-  itkGetObjectMacro( Output, vtkTable );
+  itkSetMacro( Output, std::vector< itk::Array<double> > );
+  itkGetMacro( Output, std::vector< itk::Array<double> > );
+
+  /** Set/Get output metrics name */
+  itkSetMacro( MetricsLabels, std::vector< std::string > );
+  itkGetMacro( MetricsLabels, std::vector< std::string > );
 
 
   /** Set/Get writing of different metrics */
@@ -114,6 +113,7 @@ public:
   itkGetMacro( HistogramMax, double );
 
   void Update(void);
+  void WriteCSVfile( std::string csvStatisticsFile ) const;
 
 protected:
 
@@ -125,31 +125,32 @@ protected:
 private:
 
   //Input tube group
-  typename TubeGroupType::Pointer              m_Input;
+  typename TubeGroupType::Pointer       m_Input;
 
   //Output table of measures
-  vtkSmartPointer< vtkTable >                       m_Output;
+  std::vector< itk::Array<double> >     m_Output;
+  std::vector< std::string >            m_MetricsLabels;
 
   //Metrics type to write
-  bool                                              m_BasicMetrics;
-  bool                                              m_OldMetrics;
-  bool                                              m_CurvatureMetrics;
-  bool                                              m_HistogramMetrics;
-  int                                               m_MetricFlag;
-  std::map<int, std::string>                        m_MetricFlagToNameMap;
+  bool                                  m_BasicMetrics;
+  bool                                  m_OldMetrics;
+  bool                                  m_CurvatureMetrics;
+  bool                                  m_HistogramMetrics;
+  int                                   m_MetricFlag;
+  std::map<int, std::string>            m_MetricFlagToNameMap;
 
   //Metrics arrays
-  vtkSmartPointer< vtkIntArray >                    m_TubeIdArray;
-  vtkSmartPointer< vtkIntArray >                    m_NumPointsArray;
-  std::vector< vtkSmartPointer< vtkDoubleArray >  > m_MetricArrayVec;
-  std::vector< vtkSmartPointer<vtkIntArray> >       m_HistogramArrays;
+  itk::Array<double>                    m_TubeIdArray;
+  itk::Array<double>                    m_NumPointsArray;
+  std::vector< itk::Array<double>  >    m_MetricArrayVec;
+  std::vector< itk::Array<double>  >    m_HistogramArrays;
 
   //Advanced parameters
-  ::tube::SmoothTubeFunctionEnum                    m_SmoothingMethod;
-  double                                            m_SmoothingScale;
-  int                                               m_NumberOfHistogramBins;
-  double                                            m_HistogramMin;
-  double                                            m_HistogramMax;
+  ::tube::SmoothTubeFunctionEnum        m_SmoothingMethod;
+  double                                m_SmoothingScale;
+  int                                   m_NumberOfHistogramBins;
+  double                                m_HistogramMin;
+  double                                m_HistogramMax;
 
 }; // End class ComputeTubeTortuosityMeasures
 

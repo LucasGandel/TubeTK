@@ -38,9 +38,6 @@ if( TubeTK_BUILD_WITHIN_SLICER )
 endif( TubeTK_BUILD_WITHIN_SLICER )
 include( ${ITK_USE_FILE} )
 
-find_package( VTK REQUIRED )
-include( ${VTK_USE_FILE} )
-
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${TubeTK_SOURCE_DIR}/Base/CLI/TubeTKLogo.h

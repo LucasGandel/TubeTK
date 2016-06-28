@@ -34,6 +34,7 @@ set( TubeTK_Base_Filtering_H_Files
   itktubeAnisotropicEdgeEnhancementDiffusionImageFilter.h
   itktubeAnisotropicHybridDiffusionImageFilter.h
   itktubeComputeTubeFlyThroughImageFilter.h
+  itktubeComputeTubeTortuosityMeasures.h
   itktubeConvertSpatialGraphToImageFilter.h
   itktubeCropImageFilter.h
   itktubeCropTubesFilter.h
@@ -67,6 +68,7 @@ set( TubeTK_Base_Filtering_HXX_Files
   itktubeAnisotropicEdgeEnhancementDiffusionImageFilter.hxx
   itktubeAnisotropicHybridDiffusionImageFilter.hxx
   itktubeComputeTubeFlyThroughImageFilter.hxx
+  itktubeComputeTubeTortuosityMeasures.hxx
   itktubeConvertSpatialGraphToImageFilter.hxx
   itktubeCropImageFilter.hxx
   itktubeCropTubesFilter.hxx
@@ -92,19 +94,6 @@ set( TubeTK_Base_Filtering_HXX_Files
   itktubeTubeSpatialObjectToImageFilter.hxx
   tubeImageFilters.hxx )
 
-if( TubeTK_USE_VTK )
-
-  find_package( VTK REQUIRED )
-  include( ${VTK_USE_FILE} )
-
-  list( APPEND TubeTK_Base_Filtering_H_Files
-    itktubeComputeTubeTortuosityMeasures.h )
-
-  list( APPEND TubeTK_Base_Filtering_HXX_Files
-    itktubeComputeTubeTortuosityMeasures.hxx )
-
-endif( TubeTK_USE_VTK )
-
 # Add GPU Array Fire based filter source files here
 if( TubeTK_USE_GPU_ARRAYFIRE )
   list( APPEND TubeTK_Base_Filtering_H_Files
@@ -119,7 +108,7 @@ add_library( ${PROJECT_NAME} INTERFACE )
 target_include_directories( ${PROJECT_NAME} INTERFACE
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
   )
-target_link_libraries( ${PROJECT_NAME} INTERFACE TubeTKNumerics ${VTK_LIBRARIES} )
+target_link_libraries( ${PROJECT_NAME} INTERFACE TubeTKNumerics )
 
 if( TubeTK_BUILD_TESTING )
   add_subdirectory( Testing )

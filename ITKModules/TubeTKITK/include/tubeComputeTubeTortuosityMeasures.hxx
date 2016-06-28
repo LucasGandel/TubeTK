@@ -35,6 +35,13 @@ ComputeTubeTortuosityMeasures< VDimension >
   m_Filter = FilterType::New();
 }
 
+template< unsigned int VDimension >
+void
+ComputeTubeTortuosityMeasures< VDimension >
+::WriteCSVfile( std::string csvFileName ) const
+{
+  m_Filter->WriteCSVfile( csvFileName );
+}
 
 template< unsigned int VDimension >
 void

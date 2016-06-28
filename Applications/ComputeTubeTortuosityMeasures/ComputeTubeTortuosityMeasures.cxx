@@ -34,12 +34,8 @@
 #include "itkTimeProbesCollectorBase.h"
 #include "itkSpatialObjectReader.h"
 #include "itkSpatialObjectWriter.h"
+#include "itkCSVNumericObjectFileWriter.h"
 #include "metaScene.h"
-
-// VTK INCLUDES
-#include "vtkNew.h"
-#include "vtkVersion.h"
-#include "vtkDelimitedTextWriter.h"
 
 #include "ComputeTubeTortuosityMeasuresCLP.h"
 
@@ -136,14 +132,7 @@ int DoIt( int argc, char * argv[] )
 
   timeCollector.Start( "Writing tortuosity measures to CSV" );
 
-  vtkNew< vtkDelimitedTextWriter > writer;
-  writer->SetFileName( outputCSVFile.c_str() );
-#if VTK_MAJOR_VERSION <= 5
-  writer->SetInput( tortuosityFilter->GetOutput() );
-#else
-  writer->SetInputData( tortuosityFilter->GetOutput()  );
-#endif
-  writer->Write();
+  tortuosityFilter->WriteCSVfile( outputCSVFile.c_str() );
 
   timeCollector.Stop( "Writing tortuosity measures to CSV" );
 
